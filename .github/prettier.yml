@@ -1,0 +1,32 @@
+name: "🎨 Run Prettier"
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "**.blade.php"
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: "🐰 Set up Bun"
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: "📦 Install Bun dependencies"
+        run: bun install
+
+      - name: "🎨 Format Blade style with Prettier"
+        uses: creyD/prettier_action@v4.3
+        with:
+          prettier_options: --write resources/**/*.blade.php
+          commit_message: "Auto-commit: Format Blade style with Prettier"

@@ -1,0 +1,95 @@
+name: "🧪 Run Laravel tests"
+on:
+  push:
+    branches:
+      - 'acceptance'
+  pull_request:
+    branches:
+      - 'main'
+      - 'acceptance'
+jobs:
+  laravel-tests:
+    name: "🧪 Run Laravel Tests (PHP ${{ matrix.php-versions }})"
+    runs-on: ubuntu-latest
+    env:
+      DB_HOST: 127.0.0.1
+      DB_DATABASE: laravel
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      REDIS_HOST: 127.0.0.1
+      BROADCAST_DRIVER: log
+      CACHE_DRIVER: array
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
+      APP_DOMAIN: awoostria.test
+      REG_DOMAIN: reg.awoostria.test
+      APP_URL: http://awoostria.test
+
+    # Docs: https://docs.github.com/en/actions/using-containerized-services
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: laravel
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis
+        ports:
+          - 6379/tcp
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.3']
+    steps:
+      - name: "📥 Checkout"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      # Docs: https://github.com/shivammathur/setup-php
+      - name: "🐘 Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, dom, fileinfo, mysql
+          coverage: xdebug
+
+      - name: "📁 Get composer cache directory"
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: "📂 Cache Composer dependencies"
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: "📦 Install Composer dependencies"
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: "🔧 Prepare the application"
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+
+      - name: "🧽 Clear the configuration cache"
+        run: php artisan config:clear
+
+      - name: "🚚 Migrate the database"
+        run: php artisan migrate -v
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
+
+      - name: "🧪 Run tests with Pest"
+        run: vendor/bin/pest --compact --parallel
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+          REDIS_PORT: ${{ job.services.redis.ports['6379'] }}

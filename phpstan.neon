@@ -1,0 +1,14 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+
+    paths:
+        - app/
+
+    level: 8
+
+    checkModelProperties: true
+    noEnvCallsOutsideOfConfig: true
+    checkModelAppends: true
