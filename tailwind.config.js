@@ -12,6 +12,10 @@ module.exports = {
             fontFamily: {
                 sans: ['Inter var', ...defaultTheme.fontFamily.sans],
             },
+            writingMode: {
+                'vertical-rl': 'vertical-rl',
+                'vertical-lr': 'vertical-lr',
+            },
             typography: {
                 DEFAULT: {
                     // Disable the <code> tag ::before and ::after
@@ -85,10 +89,6 @@ module.exports = {
         './app/Filament/**/*.php',
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-        // Wire-elements modal files
-        './vendor/wire-elements/modal/src/ModalComponent.php',
-        // filament-radio-button-field files
-        "./vendor/suleymanozev/**/*.blade.php",
     ],
     safelist: [
         "sm:max-w-sm",
@@ -134,5 +134,16 @@ module.exports = {
         require('@tailwindcss/typography'),
         require('@tailwindcss/forms'),
         require('@tailwindcss/aspect-ratio'),
+        function({ addUtilities }) {
+            const newUtilities = {
+                '.vertical-rl': {
+                    writingMode: 'vertical-rl',
+                },
+                '.vertical-lr': {
+                    writingMode: 'vertical-lr',
+                },
+            }
+            addUtilities(newUtilities, ['responsive', 'hover'])
+        },
     ],
 };
