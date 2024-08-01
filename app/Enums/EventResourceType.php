@@ -49,16 +49,16 @@ enum EventResourceType: string implements HasIcon, HasLabel
     public function canHaveFile(): bool
     {
         return match ($this) {
-            self::Website => false,
-            self::Conbook, self::Photo, self::Video, self::Other => true,
+            self::Website, self::Video, => false,
+            self::Conbook, self::Photo, self::Other => true,
         };
     }
 
     public function canHaveUrl(): bool
     {
         return match ($this) {
-            self::Website => true,
-            self::Conbook, self::Photo, self::Video, self::Other => false,
+            self::Website, self::Video => true,
+            self::Conbook, self::Photo, self::Other => false,
         };
     }
 }
