@@ -75,6 +75,7 @@ class EventResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('start_date', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
