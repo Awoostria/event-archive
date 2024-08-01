@@ -17,7 +17,9 @@ class EventsSidebar extends Component
     public function __construct(
         public ?Event $selectedEvent = null,
     ) {
-        $this->events = Event::all();
+        $this->events = Event::query()
+            ->orderBy('start_date', 'desc')
+            ->get();
     }
 
     public function render(): View
