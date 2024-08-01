@@ -15,7 +15,7 @@
                     @if ($this->event->getLogo())
                         <img
                             src="{{ $this->event->getLogo()?->getUrl() }}"
-                            class="h-48 w-auto"
+                            class="max-h-48"
                             alt="{{ $this->event->name }}"
                         >
                     @else
