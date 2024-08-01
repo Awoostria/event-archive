@@ -75,17 +75,7 @@
                                     @endforeach
                                 </ul>
                             </li>
-                            <li class="-mx-6 mt-auto">
-                                <a
-                                    href="https://awoostria.at"
-                                    class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-primary"
-                                >
-                                    <x-heroicon-o-chevron-right class="size-8 text-primary" />
-                                    <span aria-hidden="true">
-                                        Back to our main website
-                                    </span>
-                                </a>
-                            </li>
+                            <x-sidebar.back-to-main-website />
                         </ul>
                     </nav>
                 </div>
@@ -128,17 +118,7 @@
                             @endforeach
                         </ul>
                     </li>
-                    <li class="-mx-6 mt-auto">
-                        <a
-                            href="https://awoostria.at"
-                            class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-primary"
-                        >
-                            <x-heroicon-o-chevron-right class="size-8 text-primary" />
-                            <span aria-hidden="true">
-                                Back to our main website
-                            </span>
-                        </a>
-                    </li>
+                    <x-sidebar.back-to-main-website />
                 </ul>
             </nav>
         </div>
